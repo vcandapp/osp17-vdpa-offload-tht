@@ -1,0 +1,141 @@
+---
+- name: ControllerSriov
+  count: 3
+  hostname_format: controller-%index%
+  defaults:
+    profile: control
+    networks:
+      - network: external
+        subnet: external_subnet
+      - network: internal_api
+        subnet: internal_api_subnet
+      - network: storage
+        subnet: storage_subnet
+      - network: storage_mgmt
+        subnet: storage_mgmt_subnet
+      - network: tenant
+        subnet: tenant_subnet
+    network_config:
+      template: /home/stack/osp17_ref/nic-configs/controllervdpa.yaml
+      default_route_network:
+        - external
+    config_drive:
+      cloud_config:
+        ssh_pwauth: true
+        disable_root: false
+        chpasswd:
+          list: |-
+            root:12345678
+          expire: false
+  ansible_playbooks:
+    - playbook: /usr/share/ansible/tripleo-playbooks/cli-overcloud-node-growvols.yaml
+      extra_vars:
+        growvols_args: >
+          /=8GB
+          /tmp=1GB
+          /var/log=10GB
+          /var/log/audit=1GB
+          /home=1GB
+          /srv=10GB
+          /var=100%
+
+- name: ComputeSriov
+  count: 1
+  instances:
+    - hostname: computesriov-0
+      name: compute-0
+  defaults:
+    networks:
+      - network: external
+        subnet: external_subnet
+      - network: internal_api
+        subnet: internal_api_subnet
+      - network: tenant
+        subnet: tenant_subnet
+      - network: storage
+        subnet: storage_subnet
+    network_config:
+      template: /home/stack/osp17_ref/nic-configs/computevdpa.yaml
+      net_config_data_lookup:
+        nodegroup-dell-poweredge-r750:
+          dmiString: "system-product-name"
+          id: "PowerEdge R750"
+          nic1: eno8303
+          nic2: eno8403
+          nic3: eno12399
+          nic4: eno12409
+          nic5: eno12419
+          nic6: eno12429
+          nic7: ens1f0
+          nic8: ens1f1
+          nic9: ens1f2
+          nic10: ens1f3
+          nic11: ens2f0np0
+          nic12: ens2f1np1
+
+    config_drive:
+      cloud_config:
+        ssh_pwauth: true
+        disable_root: false
+        chpasswd:
+          list: |-
+            root:12345678
+          expire: false
+  ansible_playbooks:
+    - playbook: /usr/share/ansible/tripleo-playbooks/cli-overcloud-node-kernelargs.yaml
+      extra_vars:
+        kernel_args: "default_hugepagesz=1GB hugepagesz=1G hugepages=64 iommu=pt intel_iommu=on tsx=off isolcpus=2-47,50-95"
+        reboot_wait_timeout: 900
+        tuned_profile: "cpu-partitioning"
+        tuned_isolated_cores: "2-47,50-95"
+
+- name: ComputeVdpa
+  count: 1
+  instances:
+    - hostname: computevdpa-0
+      name: compute-1
+  defaults:
+    networks:
+      - network: external
+        subnet: external_subnet
+      - network: internal_api
+        subnet: internal_api_subnet
+      - network: tenant
+        subnet: tenant_subnet
+      - network: storage
+        subnet: storage_subnet
+    network_config:
+      template: /home/stack/osp17_ref/nic-configs/computevdpa.yaml
+      net_config_data_lookup:
+        nodegroup-dell-poweredge-r750:
+          dmiString: "system-product-name"
+          id: "PowerEdge R750"
+          nic1: eno8303
+          nic2: eno8403
+          nic3: eno12399
+          nic4: eno12409
+          nic5: eno12419
+          nic6: eno12429
+          nic7: ens1f0
+          nic8: ens1f1
+          nic9: ens1f2
+          nic10: ens1f3
+          nic11: ens2f0np0
+          nic12: ens2f1np1
+
+    config_drive:
+      cloud_config:
+        ssh_pwauth: true
+        disable_root: false
+        chpasswd:
+          list: |-
+            root:12345678
+          expire: false
+  ansible_playbooks:
+    - playbook: /usr/share/ansible/tripleo-playbooks/cli-overcloud-node-kernelargs.yaml
+      extra_vars:
+        kernel_args: "default_hugepagesz=1GB hugepagesz=1G hugepages=64 iommu=pt intel_iommu=on tsx=off isolcpus=2-19,22-39"
+        reboot_wait_timeout: 900
+        tuned_profile: "virtual-host"
+        tuned_isolated_cores: "2-47,50-95"
+

@@ -1,0 +1,21 @@
+---
+resource_registry:
+  OS::TripleO::ComputeSriov::NodeUserData: /usr/share/openstack-tripleo-heat-templates/firstboot/os-net-config-mappings.yaml
+
+parameter_defaults:
+  NetConfigDataLookup:
+    compute0:
+      dmiString: "system-product-name"
+      id: "PowerEdge R750"
+      nic1: "eno8303"
+      nic2: "eno8403"
+      nic3: "eno12399"
+      nic4: "eno12409"
+      nic5: "eno12419"
+      nic6: "eno12429"
+      nic7: "ens1f0"
+      nic8: "ens1f1"
+      nic9: "ens1f2"
+      nic10: "ens1f3"
+      nic11: "ens2f0np0"
+      nic12: "ens2f1np1"

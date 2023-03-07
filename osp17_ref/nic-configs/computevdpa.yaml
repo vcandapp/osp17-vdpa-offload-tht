@@ -1,0 +1,91 @@
+---
+
+network_config:
+
+- type: interface
+  name: nic1
+  use_dhcp: false
+  defroute: false
+
+- type: interface
+  name: nic2
+  use_dhcp: false
+  defroute: false
+
+- type: interface
+  name: nic3
+  use_dhcp: false
+  defroute: false
+
+- type: interface
+  name: nic4
+  use_dhcp: false
+  defroute: false
+
+- type: interface
+  name: nic5
+  use_dhcp: false
+  defroute: false
+
+- type: interface
+  name: nic6
+  use_dhcp: false
+  defroute: false
+
+- type: interface
+  name: nic7
+  use_dhcp: false
+  addresses:
+  - ip_netmask: {{ ctlplane_ip }}/{{ ctlplane_subnet_cidr }}
+  routes:
+  - ip_netmask: 169.254.169.254/32
+    next_hop: {{ ctlplane_ip }}
+  - default: true
+    next_hop: {{ ctlplane_gateway_ip }}
+
+- type: linux_bond
+  name: bond_api
+  use_dhcp: false
+  bonding_options: "mode=active-backup"
+  dns_servers: {{ ctlplane_dns_nameservers }}
+  members:
+    - type: interface
+      name: nic8
+      primary: true
+    - type: interface
+      name: nic9
+
+- type: vlan
+  vlan_id: {{ lookup('vars', networks_lower['InternalApi'] ~ '_vlan_id') }}
+  device: bond_api
+  addresses:
+  - ip_netmask: {{ lookup('vars', networks_lower['InternalApi'] ~ '_ip') }}/{{ lookup('vars', networks_lower['InternalApi'] ~ '_cidr') }}
+
+- type: vlan
+  vlan_id: {{ lookup('vars', networks_lower['Storage'] ~ '_vlan_id') }}
+  device: bond_api
+  addresses:
+  - ip_netmask: {{ lookup('vars', networks_lower['Storage'] ~ '_ip') }}/{{ lookup('vars', networks_lower['Storage'] ~ '_cidr') }}
+
+- type: interface
+  name: nic10
+  use_dhcp: false
+  defroute: false
+
+- type: ovs_bridge 
+  name: br-link0
+  mtu: 9000
+  use_dhcp: false
+  members:
+    - type: sriov_pf
+      name: nic11
+      numvfs: 8
+      use_dhcp: false
+      vdpa: true
+      link_mode: switchdev
+    - type: sriov_pf
+      name: nic12
+      numvfs: 8
+      use_dhcp: false
+      vdpa: true
+      link_mode: switchdev
