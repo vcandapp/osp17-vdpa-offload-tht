@@ -1,0 +1,10 @@
+parameter_defaults:
+  NeutronNetworkVLANRanges: "mx-network:56:58,mgmt:56:58,dpdk1:55:60,dpdk2:55:60,sriov1:55:60,sriov2:55:60"
+
+  # The OVS logical->physical bridge mappings to use. (br-link0==tenanet br)
+  NeutronBridgeMappings: "mx-network:br-link0,mgmt:br-link1"
+  # Defines the flat networks to configure in neutron plugins
+  NeutronFlatNetworks: "mx-network,mgmt"
+
+  # Set to "br-access" when using floating IPs on the native
+  NeutronExternalNetworkBridge: "'br-access'"
