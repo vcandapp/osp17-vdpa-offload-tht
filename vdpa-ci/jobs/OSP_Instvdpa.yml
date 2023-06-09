@@ -1,0 +1,141 @@
+def branches = [:]
+def osp_rhel_list = [
+    '17.0': '9.0',
+    '17.1': '9.2'
+]
+def net_config = [
+    'rhos-nfv-10.lab.eng.rdu2.redhat.com': ' --topology-nodes undercloud:1,controller:1 --topology-network 4_nets_3_bridges_hybrid -e override.networks.net1.nic=em4 -e override.networks.net2.nic=em1 -e override.networks.net3.nic=em2',
+    'tigon28.lab.eng.tlv2.redhat.com': ' --topology-nodes undercloud:1,controller:3 --topology-network 11_nets_3_bridges_hybrid -e override.networks.net1.nic=ens1f1 -e override.networks.net2.nic=ens1f2 -e override.networks.net3.nic=ens1f0'
+]
+def vlan_config = [
+    'rhos-nfv-10.lab.eng.rdu2.redhat.com': '100',
+    'tigon28.lab.eng.tlv2.redhat.com': '50'
+]
+
+def OS_REL = osp_rhel_list[params.release]
+def IR_NET_CONFIG = net_config[params.server]
+def VLAN_CONFIG = vlan_config[params.server]
+
+echo "IR_NET_CONFIG for server is: $IR_NET_CONFIG"
+
+pipeline {
+  agent {
+    node {
+      label 'local'
+      customWorkspace "${JENKINS_HOME}/workspace/${JOB_NAME}/${BUILD_NUMBER}"
+    }
+  }
+  options {
+    lock("${params.server}_level2_lock")
+    ansiColor('xterm')
+  }
+  parameters {
+    choice(
+      name: 'server',
+      choices: [
+        '---',
+        'rhos-nfv-10.lab.eng.rdu2.redhat.com',
+        'tigon28.lab.eng.tlv2.redhat.com'
+      ],
+      description: 'Select a cluster')
+    string(name: 'beaker_user', defaultValue: 'skramaja', description: 'Beaker username')
+    choice(name: 'release', choices: ['17.1', '17.0''], description: 'Select the OSP release')
+    string(name: 'build', defaultValue: 'latest', description: 'passed_phase2,passed_phase1,GA')
+    string(name: 'repo_url', defaultValue: 'ihttps://github.com/vcandapp/osp17-vdpa-offload-tht.git', description: 'Deploy Templates Repo')
+    choice(name: 'deploy_type', choices: ['vdpa', 'offload','sriovonly'], description: 'Deployment Type')
+    booleanParam(name: 'baremetal', defaultValue: false, description: 'Whether to run Baremetal Stage')
+
+    booleanParam(name: 'hasparent',  defaultValue: false, description: 'Hidden')
+  }
+
+  stages {
+    stage('Baremetal') {
+      when {
+        expression { return params.baremetal && params.server != "---" }
+      }
+      steps {
+        build(
+          job: 'Baremetal_Install',
+          parameters: [
+            string(name: 'server', value:"${params.server}"),
+            string(name: 'beaker_user', value:"${params.beaker_user}")
+          ]
+        )
+      }
+    }
+    stage('Configure & Clean Hypervisor') {
+      when {
+        expression { return params.server != "---" && !params.baremetal }
+      }
+      steps {
+        sh './jobss/baremetal_configure.sh'
+        sh './jobs//install_clean.sh'
+      }
+    }
+    stage('Setup') {
+      when {
+        expression { params.server != "---" }
+      }
+      environment {
+        IR_NET_CONFIG = "${IR_NET_CONFIG}"
+        VLAN_CONFIG = "${VLAN_CONFIG}"
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: "dell", passwordVariable: 'ipmipass', usernameVariable: 'ipmiusr')]) {
+          sh './osp/scripts/install_configure.sh'
+        }
+      }
+    }
+
+  }
+
+  post {
+    always {
+      script {
+        sh './logs/collect.sh'
+      }
+    }
+    success {
+      script {
+        if (params.server != "---" && params.server != "" && !params.hasparent)
+          emailext body: '''
+            JOB: $JOB_NAME #$BUILD_NUMBER
+            STATUS: SUCCESS
+            SERVER: ${server}
+            RELEASE: ${release}
+            BUILD: ${build}
+            TYPE: ${deploy_type}
+            URL: $BUILD_URL\n
+            BUILD INFO
+            ===========
+            ${FILE, path="output"}
+          ''',
+          subject: '''NFV DEV BUILD (${beaker_user}): $JOB_NAME''',
+          recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+          from: "devlab <jenkins@devlab>"
+      }
+      cleanWs()
+    }
+    failure {
+      script {
+        if (params.server != "---" && params.server != "" && !params.hasparent)
+          emailext body: '''
+            JOB: $JOB_NAME #$BUILD_NUMBER
+            STATUS: FAILED
+            SERVER: ${server}
+            RELEASE: ${release}
+            BUILD: ${build}
+            TYPE: ${deploy_type}
+            URL: $BUILD_URL\n
+            BUILD INFO
+            ===========
+            ${FILE, path="output"}
+          ''',
+          subject: '''NFV DEV BUILD (${beaker_user}): $JOB_NAME''',
+          recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+          from: "devlab <jenkins@devlab>"
+      }
+      cleanWs()
+    }
+  }
+}
