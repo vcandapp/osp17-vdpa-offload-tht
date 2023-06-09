@@ -1,0 +1,12 @@
+---
+parameter_defaults:
+  ComputeSriovOffloadParameters:
+    NovaPCIPassthrough:
+      # Geneve/VxLAN configuration for Mellanox HW-Offload NIC
+      - devname: "ens2f0np0"
+        trusted: "true"
+        physical_network: null
+      # VLAN configuration for Mellanox HW-Offload NIC
+      - devname: "ens2f1np1"
+        trusted: "true"
+        physical_network: "mx-network"

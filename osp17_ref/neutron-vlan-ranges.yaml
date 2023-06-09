@@ -1,0 +1,4 @@
+---
+parameter_defaults:
+  # The Neutron ML2 and OpenVSwitch vlan mapping range to support.
+  NeutronNetworkVLANRanges: "mx-network:56:58,mgmt:56:58,dpdk1:55:60,dpdk2:55:60,sriov1:55:60,sriov2:55:60"

@@ -1,7 +1,5 @@
 ---
-
 network_config:
-
 - type: interface
   name: nic1
   use_dhcp: false
@@ -40,52 +38,77 @@ network_config:
   routes:
   - ip_netmask: 169.254.169.254/32
     next_hop: {{ ctlplane_ip }}
-  - default: true
-    next_hop: {{ ctlplane_gateway_ip }}
 
 - type: linux_bond
   name: bond_api
+  bonding_options: mode=active-backup
   use_dhcp: false
-  bonding_options: "mode=active-backup"
   dns_servers: {{ ctlplane_dns_nameservers }}
   members:
-    - type: interface
-      name: nic8
-      primary: true
-    - type: interface
-      name: nic9
+  - type: interface
+    name: nic8
+    primary: true
+  - type: interface
+    name: nic9
 
 - type: vlan
-  vlan_id: {{ lookup('vars', networks_lower['InternalApi'] ~ '_vlan_id') }}
   device: bond_api
+  vlan_id: {{ lookup('vars', networks_lower['InternalApi'] ~ '_vlan_id') }}
   addresses:
   - ip_netmask: {{ lookup('vars', networks_lower['InternalApi'] ~ '_ip') }}/{{ lookup('vars', networks_lower['InternalApi'] ~ '_cidr') }}
 
 - type: vlan
-  vlan_id: {{ lookup('vars', networks_lower['Storage'] ~ '_vlan_id') }}
   device: bond_api
+  vlan_id: {{ lookup('vars', networks_lower['Storage'] ~ '_vlan_id') }}
   addresses:
   - ip_netmask: {{ lookup('vars', networks_lower['Storage'] ~ '_ip') }}/{{ lookup('vars', networks_lower['Storage'] ~ '_cidr') }}
 
-- type: interface
-  name: nic10
-  use_dhcp: false
-  defroute: false
-
-- type: ovs_bridge 
+- type: ovs_bridge
   name: br-link0
   mtu: 9000
   use_dhcp: false
   members:
+  - type: linux_bond
+    name: mx-bond
+    mtu: 9000
+    bonding_options: "mode=active-backup"
+    members:
     - type: sriov_pf
       name: nic11
-      numvfs: 8
+      numvfs: 4
+      primary: true
+      promisc: true
       use_dhcp: false
-      vdpa: true
+      defroute: false
       link_mode: switchdev
+
     - type: sriov_pf
       name: nic12
-      numvfs: 8
+      numvfs: 4
+      promisc: true
       use_dhcp: false
-      vdpa: true
+      defroute: false
       link_mode: switchdev
+
+- type: vlan
+  device: mx-bond
+  vlan_id: {{ lookup('vars', networks_lower['Tenant'] ~ '_vlan_id') }}
+  addresses:
+  - ip_netmask: {{ lookup('vars', networks_lower['Tenant'] ~ '_ip') }}/{{ lookup('vars', networks_lower['Tenant'] ~ '_cidr') }}
+
+- type: vlan
+  device: mx-bond
+  vlan_id: {{ lookup('vars', networks_lower['External'] ~ '_vlan_id') }}
+  addresses:
+  - ip_netmask: {{ lookup('vars', networks_lower['External'] ~ '_ip') }}/{{ lookup('vars', networks_lower['External'] ~ '_cidr') }}
+  routes:
+  - default: true
+    next_hop: {{ lookup('vars', networks_lower['External'] ~ '_gateway_ip') }}
+
+- type: ovs_bridge
+  name: br-link1
+  use_dhcp: false
+  members:
+    - type: interface
+      name: nic10
+      mtu: 9000

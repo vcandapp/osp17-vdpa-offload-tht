@@ -1,0 +1,6 @@
+
+parameter_defaults:
+   NtpPool: clock.corp.redhat.com
+   #NOTE(gfidente): We want MinPoll/MaxPoll set for 13 jobs
+   MinPoll: 4
+   MaxPoll: 5

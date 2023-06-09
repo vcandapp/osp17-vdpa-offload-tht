@@ -1,5 +1,4 @@
 ---
-
 network_config:
 - type: interface
   name: nic1
@@ -102,4 +101,3 @@ network_config:
   name: nic10
   use_dhcp: false
   defroute: false
-

@@ -31,7 +31,7 @@ time openstack overcloud deploy --stack overcloud \
   -e $THT_PATH/vdpa-config.yaml \
   -e $THT_PATH/bridge-mappings.yaml \
   -e $THT_PATH/neutron-vlan-ranges.yaml \
-  -e $THT_PATH/network-environment-overrides.yaml \
+  -e $THT_PATH/network-environment-vdpa.yaml \
   --ntp-server clock.redhat.com,time1.google.com,time2.google.com,time3.google.com,time4.google.com \
   --log-file overcloud_deployment.log
 

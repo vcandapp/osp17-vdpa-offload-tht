@@ -1,6 +1,7 @@
+
 ---
 - name: ControllerSriov
-  count: 3
+  count: 2
   hostname_format: controller-%index%
   defaults:
     profile: control
@@ -16,7 +17,7 @@
       - network: tenant
         subnet: tenant_subnet
     network_config:
-      template: /home/stack/osp17_ref/nic-configs/controllervdpa.yaml
+      template: /home/stack/osp17_ref/nic-configs/vdpa/controllersiov.yaml
       default_route_network:
         - external
     config_drive:
@@ -55,7 +56,7 @@
       - network: storage
         subnet: storage_subnet
     network_config:
-      template: /home/stack/osp17_ref/nic-configs/computevdpa.yaml
+      template: /home/stack/osp17_ref/nic-configs/vdpa/computesriov.yaml
       net_config_data_lookup:
         nodegroup-dell-poweredge-r750:
           dmiString: "system-product-name"
@@ -105,7 +106,7 @@
       - network: storage
         subnet: storage_subnet
     network_config:
-      template: /home/stack/osp17_ref/nic-configs/computevdpa.yaml
+      template: /home/stack/osp17_ref/nic-configs/vdpa/computevdpa.yaml
       net_config_data_lookup:
         nodegroup-dell-poweredge-r750:
           dmiString: "system-product-name"
@@ -134,8 +135,7 @@
   ansible_playbooks:
     - playbook: /usr/share/ansible/tripleo-playbooks/cli-overcloud-node-kernelargs.yaml
       extra_vars:
-        kernel_args: "default_hugepagesz=1GB hugepagesz=1G hugepages=64 iommu=pt intel_iommu=on tsx=off isolcpus=2-19,22-39"
+        kernel_args: "default_hugepagesz=1GB hugepagesz=1G hugepages=64 iommu=pt intel_iommu=on isolcpus=2-47,50-95"
         reboot_wait_timeout: 900
-        tuned_profile: "virtual-host"
+        tuned_profile: "cpu-partitioning"
         tuned_isolated_cores: "2-47,50-95"
-
