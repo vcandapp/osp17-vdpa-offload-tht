@@ -1,68 +1,59 @@
 #Templates for 17.0 are specified with parameters instead of resource_registry mapping
+---
 resource_registry:
-  OS::TripleO::ComputeSriov::Net::SoftwareConfig: OS::Heat::None
-  OS::TripleO::Controller::Net::SoftwareConfig: OS::Heat::None
-  OS::TripleO::ControllerSriov::Net::SoftwareConfig: OS::Heat::None
-  OS::TripleO::ComputeVdpa::Net::SoftwareConfig: OS::Heat::None
-  OS::TripleO::Services::CinderBackendDellPs: OS::Heat::None
   # Set root password on overcloud nodes.
   OS::TripleO::NodeUserData: /usr/share/openstack-tripleo-heat-templates/firstboot/userdata_root_password.yaml
 
 parameter_merge_strategies:
+  ControllerSriovParameters: merge
   ComputeSriovParameters: merge
-  ComputeVpdaParameters: merge
-  ControllerSriovParameters : merge
 
+# Customize all these values to match the local environment
 parameter_defaults:
+  ComputeSriovNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/vdpa/computesriov.yaml'
+  ControllerSriovNetworkConfigTemplate : '/home/stack/osp17_ref/nic-configs/vdpa/controllersiov.yaml'
 
-  ComputeSriovNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/computesriov.yaml'
-  ComputeVpdaNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/computesriov.yaml'
-  ControllerSriovNetworkConfigTemplate : '/home/stack/osp17_ref/nic-configs/controller.yaml'
-
-  NeutronTunnelTypes: 'geneve'
-  NeutronNetworkType: ['geneve', 'vlan']
-  NeutronEnableDVR: false
-  NeutronPluginExtensions: "port_security,qos,segments,trunk,placement"
-  NeutronSriovAgentExtensions: "qos"
-  NeutronServicePlugins: "ovn-router,trunk,qos"
-
-  #NeutronTunnelTypes: 'vxlan'
-  #NeutronNetworkType: ['vxlan', 'vlan']
-  NeutronExternalNetworkBridge: "'br-access'"
-
+  # The tenant network type for Neutron (geneve).
+  NeutronTunnelTypes: ""
+  # The tenant network type for Neutron (vlan or geneve [8.2z needed]).
+  NeutronNetworkType: "vlan"     #vDPA deploy guide
+  # Enable DVR for deployment
+  NeutronEnableDVR: true
+  # Define the DNS servers (maximum 2) for the overcloud nodes
   DnsServers: ["10.46.0.31", "10.46.0.32"]
-  SshServerOptions:
-    UseDns: "no"
+  # Nova flavor to use.
 
-  Debug: true
-
-  # NTP server configuration.
-  # NtpServer: ["clock.redhat.com"]
-  # Cloud domain - hostname suffix to use
-  #CloudDomain: "localdomain"
+  #CloudDomain: localdomain
 
   # MTU global configuration
   NeutronGlobalPhysnetMtu: 9000
-
   # Configure the classname of the firewall driver to use for implementing security groups.
   NeutronOVSFirewallDriver: openvswitch
+  SshServerOptions:
+    UseDns: "no"
+  # Enable log level DEBUG for supported components
+  Debug: true
+
+  ValidateGatewaysIcmp: false
+  ValidateControllersIcmp: false
+
+  ControllerSriovHostnameFormat: "controller-%index%"
+  ControllerSriovSchedulerHints:
+    "capabilities:node": "controller-%index%"
+  ComputeSriovchedulerHints:
+    "capabilities:node": "compute-%index%"
+
+  EnableVLANTransparency: true
+
   # From Rocky live migration with NumaTopologyFilter disabled by default
   # https://bugs.launchpad.net/nova/+bug/1289064
   NovaEnableNUMALiveMigration: true
   NodeRootPassword: "12345678"
 
-  ValidateGatewaysIcmp: false
-  ValidateControllersIcmp: false
-
-  EnableVLANTransparency: true
-
-  ControllerSriovParameters:
-    # Set OVN gateway router, required for external connectivity (SR-IOV)
-    OVNCMSOptions: "enable-chassis-as-gw"
-
   ComputeSriovParameters:
     OvsHwOffload: true
     # Set OVN gateway router, required for external connectivity
+    OVNCMSOptions: "enable-chassis-as-gw"
     KernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=64 iommu=pt intel_iommu=on isolcpus=2-47,50-95"
     TunedProfileName: "cpu-partitioning"
     IsolCpusList: "2-47,50-95"
@@ -88,4 +79,3 @@ parameter_defaults:
     - "PciPassthroughFilter"
     - "NUMATopologyFilter"
     - "AggregateInstanceExtraSpecsFilter"
-

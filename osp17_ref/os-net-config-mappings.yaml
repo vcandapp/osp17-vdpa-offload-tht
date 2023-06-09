@@ -1,7 +1,4 @@
 ---
-resource_registry:
-  OS::TripleO::ComputeSriov::NodeUserData: /usr/share/openstack-tripleo-heat-templates/firstboot/os-net-config-mappings.yaml
-
 parameter_defaults:
   NetConfigDataLookup:
     compute0:

@@ -1,28 +1,34 @@
 ---
 parameter_merge_strategies:
    ComputeVdpaParameters: merge
- 
+
 parameter_defaults:
-   ComputeVdpaNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/computevdpa.yaml'
+   ComputeVdpaNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/vdpa/computevdpa.yaml'
 
    # In the future, most parameters will be derived by mistral plan.
    ComputeVdpaParameters:
-     KernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=64 iommu=pt intel_iommu=on tsx=off isolcpus=2-19,22-39"
-     TunedProfileName: "virtual-host"
-     IsolCpusList: "2-19,22-39"
-     NovaComputeCpuDedicatedSet: ["4,6-19,24,26-39"]
+     OvsHwOffload: true
+     OVNCMSOptions: "enable-chassis-as-gw"
+     KernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=64 iommu=pt intel_iommu=on isolcpus=2-47,50-95"
+     TunedProfileName: "cpu-partitioning"
+     IsolCpusList: "2-47,50-95"
+     NovaComputeCpuDedicatedSet: ["2-47,50-95"]
+     NovaReservedHostMemory: 4096
+     NovaLibvirtRxQueueSize: 1024
+     NovaLibvirtTxQueueSize: 1024
+     NovaComputeCpuSharedSet: [0, 48, 1, 49]
 
      NovaPCIPassthrough:
       - vendor_id: "15b3"
         product_id: "101e" #This is VF product id (PF is 0xa2d6)
         address: "17:00.0"
-        physical_network: "mx-network"
+        physical_network: "mx-network"   #"mx-network"
       - vendor_id: "15b3"
         product_id: "101e"
         address: "17:00.1"
         physical_network: "mx-network"
 
-     DerivePciWhitelistEnabled: true
+     DerivePciWhitelistEnabled: false
 
   ############################
   #  Scheduler configuration #
@@ -38,4 +44,3 @@ parameter_defaults:
      - "PciPassthroughFilter"
      - "NUMATopologyFilter"
      - "AggregateInstanceExtraSpecsFilter"
-
