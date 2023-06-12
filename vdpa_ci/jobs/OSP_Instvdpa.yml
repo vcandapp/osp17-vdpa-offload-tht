@@ -87,6 +87,27 @@ pipeline {
       }
     }
 
+    stage('Topology') {
+      when {
+        expression { return params.server != "---" }
+      }
+      environment {
+        IR_NET_CONFIG = "${IR_NET_CONFIG}"
+        VLAN_CONFIG = "${VLAN_CONFIG}"
+      }
+      steps {
+        sh './vdpa_ci/osp/scripts/install_topology.sh'
+      }
+    }
+    stage('Undercloud') {
+      when {
+        expression { return params.server != "---" }
+      }
+      steps {
+        sh './vdpa_ci/osp/scripts/install_undercloud.sh'
+      }
+    }
+
   }
 
   post {

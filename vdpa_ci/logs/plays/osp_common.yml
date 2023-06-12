@@ -1,0 +1,13 @@
+---
+- hosts: undercloud
+  tasks:
+    - name: get core_puddle_version
+      slurp:
+        src: "/home/stack/core_puddle_version"
+      register: core_puddle_version
+    - name: copy to output file
+      lineinfile:
+        path: "{{ output_file }}"
+        line: "core_puddle_version={{ core_puddle_version['content'] | b64decode }}"
+      when: core_puddle_version is defined
+      delegate_to: localhost
