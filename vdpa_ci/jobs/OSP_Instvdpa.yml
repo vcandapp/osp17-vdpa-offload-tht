@@ -68,8 +68,8 @@ pipeline {
         expression { return params.server != "---" && !params.baremetal }
       }
       steps {
-        sh './jobss/baremetal_configure.sh'
-        sh './jobs//install_clean.sh'
+        sh './vdpa_ci/osp/scripts/baremetal_configure.sh'
+        sh './vdpa_ci/osp/scripts/install_clean.sh'
       }
     }
     stage('Setup') {
@@ -82,7 +82,7 @@ pipeline {
       }
       steps {
         withCredentials([usernamePassword(credentialsId: "dell", passwordVariable: 'ipmipass', usernameVariable: 'ipmiusr')]) {
-          sh './osp/scripts/install_configure.sh'
+          sh './vdpa_ci/osp/scripts/install_configure.sh'
         }
       }
     }
