@@ -5,7 +5,7 @@ set -ex
 THT_URL="${repo_url}"
 TMPL_DIR="osp${release%.*}_ref"
 CMD_FILE="overcloud_deploy_${deploy_type}.sh"
-COMMON_NET_DATA="osp/network_data_v2/${server}"
+COMMON_NET_DATA="vdpa_ci/osp/network_data_v2/${server}"
 
 THT_BASE=`basename $THT_URL`
 THT_DIR="${THT_BASE%.git}"
