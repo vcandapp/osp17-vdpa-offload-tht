@@ -5,14 +5,13 @@ set -ex
 THT_URL="${repo_url}"
 TMPL_DIR="osp${release%.*}_ref"
 CMD_FILE="overcloud_deploy_${deploy_type}.sh"
-COMMON_NET_DATA="${repo_url}/network_data.yaml"
-#COMMON_NET_DATA="osp/network_data/${server}"
+COMMON_NET_DATA="osp/network_data_v2/${server}"
 
 THT_BASE=`basename $THT_URL`
 THT_DIR="${THT_BASE%.git}"
 THT_PATH="${THT_DIR}/${TMPL_DIR}"
 
-if [ -d $THT_DIR]; then
+if [ -d $THT_DIR ]; then
     rm -rf $THT_DIR
 fi
 # Cloning to jenkins workspace folder
