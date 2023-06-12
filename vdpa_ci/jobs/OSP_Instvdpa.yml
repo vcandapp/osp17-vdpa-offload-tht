@@ -39,7 +39,7 @@ pipeline {
       ],
       description: 'Select a cluster')
     string(name: 'beaker_user', defaultValue: 'skramaja', description: 'Beaker username')
-    choice(name: 'release', choices: ['17.1', '17.0''], description: 'Select the OSP release')
+    choice(name: 'release', choices: ['17.1', '17.0'], description: 'Select the OSP release')
     string(name: 'build', defaultValue: 'latest', description: 'passed_phase2,passed_phase1,GA')
     string(name: 'repo_url', defaultValue: 'ihttps://github.com/vcandapp/osp17-vdpa-offload-tht.git', description: 'Deploy Templates Repo')
     choice(name: 'deploy_type', choices: ['vdpa', 'offload','sriovonly'], description: 'Deployment Type')
