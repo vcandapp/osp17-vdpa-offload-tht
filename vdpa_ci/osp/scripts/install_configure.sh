@@ -46,7 +46,7 @@ if [ -z $ipmipass ]; then
     exit 1
 fi
 export ipmi_password=$ipmipass
-envsubst < $THT_URL/${server} >instack.json
+envsubst < vdpa_cli/osp/instackenv/${server} >instack.json
 cat instack.json
 scp $OPT instack.json root@${server}:/root/infrared/
 
