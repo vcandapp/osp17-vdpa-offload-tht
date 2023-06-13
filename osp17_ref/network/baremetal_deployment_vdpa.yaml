@@ -17,7 +17,7 @@
       - network: tenant
         subnet: tenant_subnet
     network_config:
-      template: /home/stack/osp17_ref/nic-configs/vdpa/controllersiov.yaml
+      template: /home/stack/osp17_ref/nic-configs/controllersriov.yaml
       default_route_network:
         - external
     config_drive:
@@ -56,7 +56,7 @@
       - network: storage
         subnet: storage_subnet
     network_config:
-      template: /home/stack/osp17_ref/nic-configs/vdpa/computesriov.yaml
+      template: /home/stack/osp17_ref/nic-configs/computesriov.yaml
       net_config_data_lookup:
         nodegroup-dell-poweredge-r750:
           dmiString: "system-product-name"
@@ -106,7 +106,7 @@
       - network: storage
         subnet: storage_subnet
     network_config:
-      template: /home/stack/osp17_ref/nic-configs/vdpa/computevdpa.yaml
+      template: /home/stack/osp17_ref/nic-configs/computevdpa.yaml
       net_config_data_lookup:
         nodegroup-dell-poweredge-r750:
           dmiString: "system-product-name"

@@ -3,7 +3,7 @@ parameter_merge_strategies:
    ComputeVdpaParameters: merge
 
 parameter_defaults:
-   ComputeVdpaNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/vdpa/computevdpa.yaml'
+   ComputeVdpaNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/computevdpa.yaml'
 
    # In the future, most parameters will be derived by mistral plan.
    ComputeVdpaParameters:

@@ -10,8 +10,8 @@ parameter_merge_strategies:
 
 # Customize all these values to match the local environment
 parameter_defaults:
-  ComputeSriovNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/vdpa/computesriov.yaml'
-  ControllerSriovNetworkConfigTemplate : '/home/stack/osp17_ref/nic-configs/vdpa/controllersiov.yaml'
+  ComputeSriovNetworkConfigTemplate: '/home/stack/osp17_ref/nic-configs/computesriov.yaml'
+  ControllerSriovNetworkConfigTemplate : '/home/stack/osp17_ref/nic-configs/controllersriov.yaml'
 
   # The tenant network type for Neutron (geneve).
   NeutronTunnelTypes: ""

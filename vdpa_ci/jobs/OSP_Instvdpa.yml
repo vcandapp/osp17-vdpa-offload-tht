@@ -108,6 +108,18 @@ pipeline {
       }
     }
 
+    stage('Introspect') {
+      when {
+        expression { return params.server != "---" }
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: "dell", passwordVariable: 'ipmipass', usernameVariable: 'ipmiusr')]) {
+          sh './vdpa_ci/osp/scripts/install_introspect.sh'
+        }
+      }
+    }
+
+
   }
 
   post {
