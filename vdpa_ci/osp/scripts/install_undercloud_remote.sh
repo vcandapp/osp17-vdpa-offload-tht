@@ -49,7 +49,6 @@ infrared tripleo-undercloud -vv \
     --config-options DEFAULT.local_ip=${local_ip} \
     --config-options DEFAULT.undercloud_public_host=${undercloud_public_host} \
     --config-options DEFAULT.undercloud_admin_host=${undercloud_admin_host} \
-    --config-options DEFAULT.overcloud_domain_name="localdomain" \
     --config-options ctlplane-subnet.cidr=${cidr} \
     --config-options ctlplane-subnet.dhcp_start=${dhcp_start} \
     --config-options ctlplane-subnet.dhcp_end=${dhcp_end} \
