@@ -25,9 +25,7 @@ REPO=""
 if [[ ${RELEASE} != "13" ]]; then
     # Facing error after installing shift-on-stack, fix it before enabling it
     SSL="--ssl no --tls-ca https://password.corp.redhat.com/RH-IT-Root-CA.crt"
-    REPO="--repos-urls
-http://download.devel.redhat.com/rcm-guest/puddles/OpenStack/17.0-RHEL-9/latest-RHOS-17-RHEL-9.0/compose/OpenStack/x86_64/os/"
-    #REPO="--repos-urls http://download-node-02.eng.bos.redhat.com/rhel-8/nightly/updates/FDP/latest-FDP-8-RHEL-8/compose/Server/x86_64/os/fdp-nightly-updates.repo"
+    REPO="--repos-urls http://download.eng.pek2.redhat.com/rcm-guest/puddles/OpenStack/17.1-RHEL-9/latest-RHOS-17.1-RHEL-9.1/compose/OpenStack/x86_64/os/"
 fi
 
 local_ip=$(awk -F "=" '/^local_ip/{print $2}' /root/infrared/undercloud.conf | xargs)
