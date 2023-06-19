@@ -25,7 +25,7 @@ REPO=""
 if [[ ${RELEASE} != "13" ]]; then
     # Facing error after installing shift-on-stack, fix it before enabling it
     SSL="--ssl no --tls-ca https://password.corp.redhat.com/RH-IT-Root-CA.crt"
-    REPO="--repos-urls http://download.eng.pek2.redhat.com/rcm-guest/puddles/OpenStack/17.1-RHEL-9/latest-RHOS-17.1-RHEL-9.1/compose/OpenStack/x86_64/os/"
+    REPO="--repos-urls http://download.eng.pek2.redhat.com/rcm-guest/puddles/OpenStack/17.1-RHEL-9/latest-RHOS-17.1-RHEL-9.2/compose/OpenStack/x86_64/os/"
 fi
 
 local_ip=$(awk -F "=" '/^local_ip/{print $2}' /root/infrared/undercloud.conf | xargs)
@@ -44,7 +44,8 @@ infrared tripleo-undercloud -vv \
     --version $RELEASE --build ${BUILD} \
     --splitstack no  --shade-host undercloud-0 \
     --boot-mode "uefi" \
-    --images-task=rpm --images-update no ${SSL} ${REPO} \
+    --images-task=rpm --images-update no ${SSL} \
+    ${REPO} \
     --config-file /root/infrared/undercloud.conf \
     --config-options DEFAULT.undercloud_timezone=UTC \
     --ntp-pool clock.corp.redhat.com \
