@@ -42,7 +42,6 @@ inspection_iprange=$(awk -F "=" '/^inspection_iprange/{print $2;exit}' /root/inf
 infrared tripleo-undercloud -vv \
     -o undercloud.yml --mirror "brq2" \
     --version $RELEASE --build ${BUILD} \
-    --splitstack no  --shade-host undercloud-0 \
     --boot-mode "uefi" \
     --images-task=rpm --images-update no ${SSL} \
     ${REPO} \
@@ -50,7 +49,6 @@ infrared tripleo-undercloud -vv \
     --config-options DEFAULT.undercloud_timezone=UTC \
     --ntp-pool clock.corp.redhat.com \
     --tls-ca 'https://password.corp.redhat.com/RH-IT-Root-CA.crt'
-
 
 
 infrared ssh undercloud-0 "sudo yum install -y wget tmux vim"
