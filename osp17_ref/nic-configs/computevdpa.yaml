@@ -77,7 +77,7 @@ network_config:
     members:
     - type: sriov_pf
       name: nic11
-      numvfs: 4
+      numvfs: 1
       primary: true
       promisc: true
       use_dhcp: false
@@ -87,7 +87,7 @@ network_config:
 
     - type: sriov_pf
       name: nic12
-      numvfs: 4
+      numvfs: 1
       promisc: true
       use_dhcp: false
       defroute: false

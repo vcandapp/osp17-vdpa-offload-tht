@@ -18,7 +18,7 @@ parameter_defaults:
   # The tenant network type for Neutron (vlan or geneve [8.2z needed]).
   NeutronNetworkType: "vlan"     #vDPA deploy guide
   # Enable DVR for deployment
-  NeutronEnableDVR: true
+  NeutronEnableDVR: false
   # Define the DNS servers (maximum 2) for the overcloud nodes
   DnsServers: ["10.46.0.31", "10.46.0.32"]
   # Nova flavor to use.

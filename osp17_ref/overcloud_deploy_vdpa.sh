@@ -12,7 +12,7 @@ if [[ ! -f $THT_PATH/dvr_workarounds.sh ]]; then
     exit 1
 fi
 
-bash $THT_PATH/dvr_workarounds.sh
+#bash $THT_PATH/dvr_workarounds.sh
 
 time openstack overcloud deploy --stack overcloud \
   --templates /usr/share/openstack-tripleo-heat-templates \
