@@ -20,13 +20,15 @@ parameter_defaults:
 
      NovaPCIPassthrough:
       - vendor_id: "15b3"
-        product_id: "101e" #This is VF product id (PF is 0xa2d6)
-        address: "17:00.0"
-        physical_network: "mx-network"   #"mx-network"
+        product_id: "101e" #VF product id(0xa2d6) (VF is 101e)
+        address: "0000:17:00.0"
+        physical_network: mx-network
+        trusted: "true"
       - vendor_id: "15b3"
-        product_id: "101e"
-        address: "17:00.1"
-        physical_network: "mx-network"
+        product_id: "101e" #This is VF product id (PF is 101e)
+        address: "0000:17:00.1"
+        physical_network: mx-network
+        trusted: "true"
 
      DerivePciWhitelistEnabled: false
 
