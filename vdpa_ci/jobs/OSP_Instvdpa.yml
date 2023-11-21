@@ -5,11 +5,13 @@ def osp_rhel_list = [
 ]
 def net_config = [
     'rhos-nfv-10.lab.eng.rdu2.redhat.com': ' --topology-nodes undercloud:1,controller:1 --topology-network 4_nets_3_bridges_hybrid -e override.networks.net1.nic=em4 -e override.networks.net2.nic=em1 -e override.networks.net3.nic=em2',
-    'tigon28.lab.eng.tlv2.redhat.com': ' --topology-nodes undercloud:1,controller:3 --topology-network 11_nets_3_bridges_hybrid -e override.networks.net1.nic=ens1f1 -e override.networks.net2.nic=ens1f2 -e override.networks.net3.nic=ens1f0'
+    'tigon28.lab.eng.tlv2.redhat.com': ' --topology-nodes undercloud:1,controller:3 --topology-network 11_nets_3_bridges_hybrid -e override.networks.net1.nic=ens1f1 -e override.networks.net2.nic=ens1f2 -e override.networks.net3.nic=ens1f0',
+    'tigon25.lab.eng.tlv2.redhat.com': ' --topology-nodes undercloud:1,controller:3 --topology-network 11_nets_3_bridges_hybrid -e override.networks.net1.nic=ens1f1 -e override.networks.net2.nic=ens1f2 -e override.networks.net3.nic=ens1f0'
 ]
 def vlan_config = [
     'rhos-nfv-10.lab.eng.rdu2.redhat.com': '100',
-    'tigon28.lab.eng.tlv2.redhat.com': '50'
+    'tigon28.lab.eng.tlv2.redhat.com': '50' ,
+    'tigon25.lab.eng.tlv2.redhat.com': '30'
 ]
 
 def OS_REL = osp_rhel_list[params.release]
@@ -35,7 +37,8 @@ pipeline {
       choices: [
         '---',
         'rhos-nfv-10.lab.eng.rdu2.redhat.com',
-        'tigon28.lab.eng.tlv2.redhat.com'
+        'tigon28.lab.eng.tlv2.redhat.com',
+        'tigon25.lab.eng.tlv2.redhat.com'
       ],
       description: 'Select a cluster')
     string(name: 'beaker_user', defaultValue: 'skramaja', description: 'Beaker username')
