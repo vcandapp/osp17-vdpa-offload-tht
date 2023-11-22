@@ -40,7 +40,7 @@ inspection_iprange=$(awk -F "=" '/^inspection_iprange/{print $2;exit}' /root/inf
 #--repos-urls http://download.devel.redhat.com/rcm-guest/puddles/OpenStack/17.0-RHEL-8/latest-RHOS-17.0-RHEL-8.4/compose/OpenStack/x86_64/os/ \
 
 infrared tripleo-undercloud -vv \
-    -o undercloud.yml --mirror "brq2" \
+    -o undercloud.yml --mirror "tlv2" \
     --version $RELEASE --build ${BUILD} \
     --boot-mode "uefi" \
     --images-task=rpm --images-update no ${SSL} \
@@ -48,7 +48,7 @@ infrared tripleo-undercloud -vv \
     --config-file /root/infrared/undercloud.conf \
     --config-options DEFAULT.undercloud_timezone=UTC \
     --ntp-pool clock.corp.redhat.com \
-    --tls-ca 'https://password.corp.redhat.com/RH-IT-Root-CA.crt'
+    --tls-ca 'https://certs.corp.redhat.com/certs/Current-IT-Root-CAs.pem'
 
 
 infrared ssh undercloud-0 "sudo yum install -y wget tmux vim"
